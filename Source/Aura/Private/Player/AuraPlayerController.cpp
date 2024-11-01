@@ -4,10 +4,44 @@
 #include "Player/AuraPlayerController.h"
 #include "EnhancedInputSubsystems.h"
 #include  "EnhancedInputComponent.h"
+#include "Interaction/EnemyInterface.h"
 
 AAuraPlayerController::AAuraPlayerController()
 {
 	bReplicates = true;
+}
+
+void AAuraPlayerController::PlayerTick(float DeltaTime)
+{
+	Super::PlayerTick(DeltaTime);
+
+	CursorTracer();
+}
+
+void AAuraPlayerController::CursorTracer()
+{
+	FHitResult CursorHit;
+	GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
+	if (!CursorHit.bBlockingHit) return;
+
+	LastActor = ThisActor;
+	ThisActor = CursorHit.GetActor();
+
+	const bool CanHighlightNewActor = LastActor == nullptr && ThisActor != nullptr;
+	const bool CanUnhighlightLastActor = LastActor != nullptr && ThisActor == nullptr;
+	const bool CanUnhighlightLastActorAndHighlightNewActor = LastActor != nullptr
+		&& ThisActor != nullptr
+		&& LastActor != ThisActor;
+
+	if (CanHighlightNewActor)	ThisActor->HighlightActor();
+	
+	if (CanUnhighlightLastActor) LastActor->UnHighlightActor();
+	
+	if (CanUnhighlightLastActorAndHighlightNewActor)
+	{
+		LastActor->UnHighlightActor();
+		ThisActor->HighlightActor();
+	}
 }
 
 void AAuraPlayerController::BeginPlay()
@@ -15,7 +49,8 @@ void AAuraPlayerController::BeginPlay()
 	Super::BeginPlay();
 	check(AuraContext);
 
-	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
+	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(
+		GetLocalPlayer());
 	check(Subsystem);
 	Subsystem->AddMappingContext(AuraContext, 0);
 
@@ -52,4 +87,3 @@ void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 		ControlledPawn->AddMovementInput(RightDirection, InputAxisVector.X);
 	}
 }
-
