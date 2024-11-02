@@ -33,10 +33,10 @@ void AAuraPlayerController::CursorTracer()
 		&& ThisActor != nullptr
 		&& LastActor != ThisActor;
 
-	if (CanHighlightNewActor)	ThisActor->HighlightActor();
-	
+	if (CanHighlightNewActor) ThisActor->HighlightActor();
+
 	if (CanUnhighlightLastActor) LastActor->UnHighlightActor();
-	
+
 	if (CanUnhighlightLastActorAndHighlightNewActor)
 	{
 		LastActor->UnHighlightActor();
