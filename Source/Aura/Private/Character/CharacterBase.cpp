@@ -20,5 +20,8 @@ UAbilitySystemComponent* ACharacterBase::GetAbilitySystemComponent() const
 void ACharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
+}
+
+void ACharacterBase::InitAbilityActorInfo()
+{
 }
