@@ -12,7 +12,6 @@ class UOverlayWidgetController;
 class UAuraUserWidget;
 struct FWidgetControllerParams;
 
-
 /**
  * 
  */
